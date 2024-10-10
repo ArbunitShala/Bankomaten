@@ -10,7 +10,7 @@
             decimal[][] accounts = new decimal[5][];
             //array som har namnen på kontorna i banken
             string[] accountNames = ["Lönekonto", "Sparkonto", "Hushåll", "Buffert", "Barnsparkonto"];
-
+            // skapar användarnamn och pinkod
             usersAndPins[0, 0] = "user1";
             usersAndPins[0, 1] = "1111";
             usersAndPins[1, 0] = "user2";
@@ -21,7 +21,7 @@
             usersAndPins[3, 1] = "4444";
             usersAndPins[4, 0] = "user5";
             usersAndPins[4, 1] = "5555";
-
+            // tilldelar värden till varje användares bankonto
             accounts[0] = [1100.35m];
             accounts[1] = [13000m, 25300.59m];
             accounts[2] = [33549.77m, 177000, 5600m];
@@ -48,14 +48,31 @@
             {
                 Console.Clear();
                 Console.WriteLine("Du är inloggad ");
-                for(int i = 0; i < accounts[userIndex].Length; i++)
-                {
-                    Console.WriteLine($"{accountNames[i]}: {accounts[userIndex][i]:C}");
-                }
-
+                Console.WriteLine("[1] Se dina konton och saldo");
+                Console.WriteLine("[2] Överföring mellan konton");
+                Console.WriteLine("[3] Ta ut pengar");
+                Console.WriteLine("[4] Logga ut");
             }
-
-
+            int menuChoice = Convert.ToInt32(Console.ReadLine());
+            switch (menuChoice)
+            {
+                case 1:
+                    // metod för att se konton och saldo
+                    
+                    break;
+                case 2:
+                    //metod för att göra överföring mellan konton
+                    break;
+                case 3:
+                    // metod för att ta ut pengar 
+                    break;
+                case 4:
+                    // logga ut
+                    break;
+                default:
+                Console.WriteLine("Ogiltigt val välj mellan 1-4.");
+                    break;
+            }
         }
     }
 }
