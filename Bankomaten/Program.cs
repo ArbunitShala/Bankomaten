@@ -75,8 +75,10 @@
         }
         static void showAccountsAndAmount(string[] accountNames, decimal[][] accounts, int userIndex)
         {
+            // loopar igenom alla konton för den valda användaren
             for (int i = 0; i < accounts.Length; i++)
             {
+                // skriver ut kontonamnen samt saldo på varje konto
                 Console.WriteLine($"{accountNames[i]}: " + $"{accounts[userIndex][i]:C}");
             }
         }
