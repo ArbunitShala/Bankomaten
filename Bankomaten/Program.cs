@@ -4,11 +4,11 @@
     {
         static void Main(string[] args)
         {
-            //tvådimensionell array som sparar användarna och pinkoderna
+            // tvådimensionell array som sparar användarna och pinkoderna
             string[,] usersAndPins = new string[5, 2];
             //jagged array som sparar användarnas konton i banken
             decimal[][] accounts = new decimal[5][];
-            //array som har namnen på kontorna i banken
+            // array som har namnen på kontorna i banken
             string[] accountNames = ["Lönekonto", "Sparkonto", "Hushåll", "Buffert", "Barnsparkonto"];
             // skapar användarnamn och pinkod
             usersAndPins[0, 0] = "user1";
@@ -29,54 +29,87 @@
             accounts[4] = [65000.88m, 5000000.19m, 12000.56m, 50000.35m, 81000m];
 
             Console.WriteLine("Välkomen till bankomaten! ");
-            Console.Write("Ange ditt användarnamn: ");
-            string userName = Console.ReadLine();
-
+            bool run = true;
             int userIndex = -1;
-            for (int i = 0; i < usersAndPins.GetLength(0); i++)
+            while (run)
             {
-                if(userName == usersAndPins[i, 0])
+                Console.Write("Ange ditt användarnamn: ");
+                string userName = Console.ReadLine();
+                
+                // variabel userFound som kontrollerar om användaren hittades
+                bool userFound = false;
+                for (int i = 0; i < usersAndPins.GetLength(0); i++)
                 {
-                    userIndex = i;
+                    if (userName == usersAndPins[i, 0])
+                    {
+                        userIndex = i;
+                        userFound = true;
+                        break;
+                    }
                 }
-            }
-            Console.Write("Ange din pin-kod: ");
-            string userPin = Console.ReadLine();
+                if (!userFound)
+                {
+                    Console.WriteLine("Användaren hittades ej, försök igen.");
+                    continue;
+                }
+                // 3 pinkod försök att logga in
+                bool correctPin = false;
+                int attempts = 0;
 
-            if (usersAndPins[userIndex,1] == userPin)
-            {
-                Console.Clear();
-                Console.WriteLine("Du är inloggad ");
-                Console.WriteLine("[1] Se dina konton och saldo");
-                Console.WriteLine("[2] Överföring mellan konton");
-                Console.WriteLine("[3] Ta ut pengar");
-                Console.WriteLine("[4] Logga ut");
-            }
-            int menuChoice = Convert.ToInt32(Console.ReadLine());
-            switch (menuChoice)
-            {
-                case 1:
-                    // metod för att se konton och saldo
-                    showAccountsAndAmount(accountNames, accounts, userIndex);
+                while(attempts < 3 && !correctPin)
+                {
+                    Console.Write("Ange din pin-kod: ");
+                    string userPin = Console.ReadLine();
+
+                    if (usersAndPins[userIndex, 1] == userPin)
+                    {
+                        correctPin = true;
+                    }
+                    else
+                    {
+                        attempts++;//försök addderas och meddelnade skrivs ut
+                        Console.WriteLine($"Du angav fel pinkod. {3 - attempts} försök kvar. ");
+                    }
+                }
+                if (!correctPin)//programmet avslutas om pinkoden är fel vid tredje försöket
+                {
+                    Console.WriteLine("Programmet avslutas");
+                    run = false;
                     break;
-                case 2:
-                    //metod för att göra överföring mellan konton
-                    break;
-                case 3:
-                    // metod för att ta ut pengar 
-                    break;
-                case 4:
-                    // logga ut
-                    break;
-                default:
-                Console.WriteLine("Ogiltigt val välj mellan 1-4.");
-                    break;
+                }
+                    Console.Clear();
+                    Console.WriteLine("Du är inloggad ");
+                    Console.WriteLine("[1] Se dina konton och saldo");
+                    Console.WriteLine("[2] Överföring mellan konton");
+                    Console.WriteLine("[3] Ta ut pengar");
+                    Console.WriteLine("[4] Logga ut");
+
+                int menuChoice = Convert.ToInt32(Console.ReadLine());
+                switch (menuChoice)
+                {
+                    case 1:
+                        // metod för att se konton och saldo
+                        showAccountsAndAmount(accountNames, accounts, userIndex);
+                        break;
+                    case 2:
+                        //metod för att göra överföring mellan konton
+                        break;
+                    case 3:
+                        // metod för att ta ut pengar 
+                        break;
+                    case 4:
+                        // logga ut
+                        break;
+                    default:
+                        Console.WriteLine("Ogiltigt val, välj mellan 1-4.");
+                        break;
+                }
             }
         }
         static void showAccountsAndAmount(string[] accountNames, decimal[][] accounts, int userIndex)
         {
             // loopar igenom alla konton för den valda användaren
-            for (int i = 0; i < accounts.Length; i++)
+            for (int i = 0; i < accounts[userIndex].Length; i++)
             {
                 // skriver ut kontonamnen samt saldo på varje konto
                 Console.WriteLine($"{accountNames[i]}: " + $"{accounts[userIndex][i]:C}");
