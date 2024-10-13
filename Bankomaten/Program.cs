@@ -11,7 +11,7 @@ namespace Bankomaten
             //jagged array som sparar användarnas konton i banken
             decimal[][] accounts = new decimal[5][];
             // array som har namnen på kontorna i banken
-            string[] accountNames = ["1 Lönekonto", "2 Sparkonto", "3 Hushåll", "4 Buffert", "5 Barnsparkonto"];
+            string[] accountNames = ["1.Lönekonto", "2.Sparkonto", "3.Hushåll", "4.Buffert", "5.Barnsparkonto"];
             // skapar användarnamn och pinkod
             usersAndPins[0, 0] = "user1";
             usersAndPins[0, 1] = "1111";
@@ -40,6 +40,7 @@ namespace Bankomaten
                 
                 // variabel userFound som kontrollerar om användaren hittades
                 bool userFound = false;
+                // loopar igenom usersAndPins för att få fram användarnamn-------------------
                 for (int i = 0; i < usersAndPins.GetLength(0); i++)
                 {
                     if (userName == usersAndPins[i, 0])
@@ -49,7 +50,7 @@ namespace Bankomaten
                         break;
                     }
                 }
-                if (!userFound)
+                if (!userFound)//om användaren inte finns
                 {
                     Console.WriteLine("Användaren hittades ej, försök igen.");
                     continue;
@@ -79,46 +80,64 @@ namespace Bankomaten
                     run = false;
                     break;
                 }
-                    Console.Clear();//meny
-                    Console.WriteLine("Du är inloggad ");
+                Console.Clear();
+                Console.WriteLine("Du är inloggad ");
+                bool loggedIn = true;
+                while (loggedIn)
+                {
+                    //meny
                     Console.WriteLine("[1] Se dina konton och saldo");
                     Console.WriteLine("[2] Överföring mellan konton");
                     Console.WriteLine("[3] Ta ut pengar");
                     Console.WriteLine("[4] Logga ut");
 
-                int menuChoice = Convert.ToInt32(Console.ReadLine());
-                switch (menuChoice)
-                {
-                    case 1:
-                        // metod för att se konton och saldo
-                        showAccountsAndAmount(accountNames, accounts, userIndex);
-                        break;
-                    case 2:
-                        //metod för att göra överföring mellan konton
-                        Console.Write("Välj konto att överföra pengar från: ");
-                        int fromAccount = Convert.ToInt32(Console.ReadLine()) -1;//-1 för att indexplatserna börjar på 0
-                        Console.Write("Välj ett mottagarkonto: ");
-                        int toAccount = Convert.ToInt32(Console.ReadLine()) -1;
-                        Console.Write("Ange belopp du vill överföra: ");
-                        decimal amount = Convert.ToDecimal(Console.ReadLine());
-                        // anropar metoden
-                        transferMoney(accounts, userIndex, fromAccount, toAccount, amount);
-                        break;
-                    case 3:
-                        // metod för att ta ut pengar 
-                        Console.Write("Välj konto att ta ut pengar från: ");
-                        int withdrawFromAccount = Convert.ToInt32(Console.ReadLine()) - 1;//-1 för att få korrekt indexplats
-                        Console.Write("Ange belopp du vill ta ut: ");
-                        decimal withdrawAmount = Convert.ToDecimal(Console.ReadLine());
-                        //anropar metoden
-                        withdrawMoney(accounts, userIndex, withdrawFromAccount, withdrawAmount, usersAndPins);
-                        break;
-                    case 4:
-                        // logga ut
-                        break;
-                    default:
-                        Console.WriteLine("Ogiltigt val, välj mellan 1-4.");
-                        break;
+                    int menuChoice = Convert.ToInt32(Console.ReadLine());
+                    switch (menuChoice)
+                    {
+                        case 1:
+                            // metod för att se konton och saldo
+                            showAccountsAndAmount(accountNames, accounts, userIndex);
+                            Console.WriteLine("Klicka valfri knapp för att komma till huvudmenyn");
+                            Console.WriteLine("---------------------------------------");
+                            Console.ReadKey();
+                            break;
+                        case 2:
+                            //metod för att göra överföring mellan konton
+                            Console.Write("Välj konto att överföra pengar från: ");
+                            int fromAccount = Convert.ToInt32(Console.ReadLine()) - 1;//-1 för att indexplatserna börjar på 0
+                            Console.Write("Välj ett mottagarkonto: ");
+                            int toAccount = Convert.ToInt32(Console.ReadLine()) - 1;
+                            Console.Write("Ange belopp du vill överföra: ");
+                            decimal amount = Convert.ToDecimal(Console.ReadLine());
+                            
+                            // anropar metoden
+                            transferMoney(accounts, userIndex, fromAccount, toAccount, amount);
+                            Console.WriteLine("Klicka valfri knapp för att komma till huvudmenyn");
+                            Console.WriteLine("---------------------------------------");
+                            Console.ReadKey();
+                            break;
+                        case 3:
+                            // metod för att ta ut pengar 
+                            Console.Write("Välj konto att ta ut pengar från: ");
+                            int withdrawFromAccount = Convert.ToInt32(Console.ReadLine()) - 1;//-1 för att få korrekt indexplats
+                            Console.Write("Ange belopp du vill ta ut: ");
+                            decimal withdrawAmount = Convert.ToDecimal(Console.ReadLine());
+                            
+                            //anropar metoden
+                            withdrawMoney(accounts, userIndex, withdrawFromAccount, withdrawAmount, usersAndPins);
+                            Console.WriteLine("Klicka valfri knapp för att komma till huvudmenyn");
+                            Console.WriteLine("---------------------------------------");
+                            Console.ReadKey();
+                            break;
+                        case 4:
+                            // logga ut
+                            loggedIn = false;
+                            break;
+                        default:
+                            //felmeddelande 
+                            Console.WriteLine("Ogiltigt val, välj mellan 1-4.");
+                            break;
+                    }
                 }
             }
         }
@@ -133,7 +152,8 @@ namespace Bankomaten
         }
         static void transferMoney(decimal[][] accounts, int userIndex,int fromAccount, int toAccount, decimal amount)
         {
-            // kontrollerar om indexen är giltiga, får ej vara mindre än 0 eller lika med eller större än längden på konton
+            // kontrollerar om indexen är giltiga, får ej vara mindre än 0
+            // eller lika med eller större än längden på konton
             // tex. giltigt index på user4 är mellan 0-3
             if (fromAccount < 0 || fromAccount >= accounts[userIndex].Length || toAccount < 0 || toAccount >= accounts[userIndex].Length)
             {
@@ -155,11 +175,15 @@ namespace Bankomaten
         }
         static void withdrawMoney(decimal[][] accounts, int userIndex, int withdrawFromAccount, decimal withdrawAmount, string[,]usersAndPins)
         {
+            // kontrollerar om index är giltigt, om mindre än 0 eller lika med
+            // eller större än konto längd skrivs felmeddelande ut
             if (withdrawFromAccount < 0 || withdrawFromAccount >= accounts[userIndex].Length)
             {
                 Console.WriteLine("Ogiltigt kontoval");
-                return;
+                return;// metoden avbryts
             }
+            // kontrollerar om det finns tillräckligt i saldo
+            // annars skrivs felmeddelande ut
             if (accounts[userIndex][withdrawFromAccount] < withdrawAmount)
             {
                 Console.WriteLine("För lite saldo på kontot");
@@ -167,6 +191,7 @@ namespace Bankomaten
             }
             bool correctPin = false;
             int attempts = 0;
+            // kontrollerar pinkoden
             while (!correctPin)
             {
                 Console.Write("Bekräfta med din pin-kod: ");
