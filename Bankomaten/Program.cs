@@ -106,6 +106,12 @@ namespace Bankomaten
                         break;
                     case 3:
                         // metod för att ta ut pengar 
+                        Console.Write("Välj konto att ta ut pengar från: ");
+                        int withdrawFromAccount = Convert.ToInt32(Console.ReadLine()) - 1;//-1 för att få korrekt indexplats
+                        Console.Write("Ange belopp du vill ta ut: ");
+                        decimal withdrawAmount = Convert.ToDecimal(Console.ReadLine());
+                        //anropar metoden
+                        withdrawMoney(accounts, userIndex, withdrawFromAccount, withdrawAmount, usersAndPins);
                         break;
                     case 4:
                         // logga ut
@@ -146,6 +152,39 @@ namespace Bankomaten
             Console.WriteLine("Överföringen är klar!");// nya saldot skrivs ut
             Console.WriteLine($"Nytt avsändarkonto saldo: {accounts[userIndex][fromAccount]:C}");
             Console.WriteLine($"Nytt mottagarkonto saldo: {accounts[userIndex][toAccount]:C}");
+        }
+        static void withdrawMoney(decimal[][] accounts, int userIndex, int withdrawFromAccount, decimal withdrawAmount, string[,]usersAndPins)
+        {
+            if (withdrawFromAccount < 0 || withdrawFromAccount >= accounts[userIndex].Length)
+            {
+                Console.WriteLine("Ogiltigt kontoval");
+                return;
+            }
+            if (accounts[userIndex][withdrawFromAccount] < withdrawAmount)
+            {
+                Console.WriteLine("För lite saldo på kontot");
+                return;
+            }
+            bool correctPin = false;
+            int attempts = 0;
+            while (!correctPin)
+            {
+                Console.Write("Bekräfta med din pin-kod: ");
+                string userPin = Console.ReadLine();
+                if (usersAndPins[userIndex, 1] == userPin)
+                {
+                    correctPin = true;
+                }
+                else
+                {
+                    attempts++;//försök addderas och meddelnade skrivs ut
+                    Console.WriteLine($"Du angav fel pinkod, försök igen ");
+                }
+            }
+            // uttag görs från konto och nya saldot skrivs ut
+            accounts[userIndex][withdrawFromAccount] -= withdrawAmount;
+            Console.WriteLine("Uttaget lyckades");
+            Console.WriteLine($"Uppdaterat saldo: {accounts[userIndex][withdrawFromAccount]:C}");
         }
     }
 }
