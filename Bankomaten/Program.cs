@@ -1,4 +1,6 @@
-﻿namespace Bankomaten
+﻿using System.Security.Principal;
+
+namespace Bankomaten
 {
     internal class Program
     {
@@ -9,7 +11,7 @@
             //jagged array som sparar användarnas konton i banken
             decimal[][] accounts = new decimal[5][];
             // array som har namnen på kontorna i banken
-            string[] accountNames = ["Lönekonto", "Sparkonto", "Hushåll", "Buffert", "Barnsparkonto"];
+            string[] accountNames = ["1 Lönekonto", "2 Sparkonto", "3 Hushåll", "4 Buffert", "5 Barnsparkonto"];
             // skapar användarnamn och pinkod
             usersAndPins[0, 0] = "user1";
             usersAndPins[0, 1] = "1111";
@@ -77,7 +79,7 @@
                     run = false;
                     break;
                 }
-                    Console.Clear();
+                    Console.Clear();//meny
                     Console.WriteLine("Du är inloggad ");
                     Console.WriteLine("[1] Se dina konton och saldo");
                     Console.WriteLine("[2] Överföring mellan konton");
@@ -93,6 +95,14 @@
                         break;
                     case 2:
                         //metod för att göra överföring mellan konton
+                        Console.Write("Välj konto att överföra pengar från: ");
+                        int fromAccount = Convert.ToInt32(Console.ReadLine()) -1;//-1 för att indexplatserna börjar på 0
+                        Console.Write("Välj ett mottagarkonto: ");
+                        int toAccount = Convert.ToInt32(Console.ReadLine()) -1;
+                        Console.Write("Ange belopp du vill överföra: ");
+                        decimal amount = Convert.ToDecimal(Console.ReadLine());
+                        // anropar metoden
+                        transferMoney(accounts, userIndex, fromAccount, toAccount, amount);
                         break;
                     case 3:
                         // metod för att ta ut pengar 
@@ -112,8 +122,30 @@
             for (int i = 0; i < accounts[userIndex].Length; i++)
             {
                 // skriver ut kontonamnen samt saldo på varje konto
-                Console.WriteLine($"{accountNames[i]}: " + $"{accounts[userIndex][i]:C}");
+                Console.WriteLine($"{accountNames[i]}: {accounts[userIndex][i]:C}");
             }
+        }
+        static void transferMoney(decimal[][] accounts, int userIndex,int fromAccount, int toAccount, decimal amount)
+        {
+            // kontrollerar om indexen är giltiga, får ej vara mindre än 0 eller lika med eller större än längden på konton
+            // tex. giltigt index på user4 är mellan 0-3
+            if (fromAccount < 0 || fromAccount >= accounts[userIndex].Length || toAccount < 0 || toAccount >= accounts[userIndex].Length)
+            {
+                Console.WriteLine("Ogiltigt val");// felmeddelande vid ogiltigt val
+                return;// metoden avbryts
+            }
+            // kontrollerar om det finns tillräckligt saldo för att göra överföring på avsändarkontot
+            if (accounts[userIndex][fromAccount] < amount)
+            {
+                Console.WriteLine("Du har för lite saldo på kontot");
+                return;
+            }
+            // överför summan mellan kontorna
+            accounts[userIndex][fromAccount] -= amount;
+            accounts[userIndex][toAccount] += amount;
+            Console.WriteLine("Överföringen är klar!");// nya saldot skrivs ut
+            Console.WriteLine($"Nytt avsändarkonto saldo: {accounts[userIndex][fromAccount]:C}");
+            Console.WriteLine($"Nytt mottagarkonto saldo: {accounts[userIndex][toAccount]:C}");
         }
     }
 }
